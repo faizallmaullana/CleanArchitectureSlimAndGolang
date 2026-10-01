@@ -2,24 +2,26 @@
 
 declare(strict_types=1);
 
+use App\Application\Product\ProductService;
+use App\Http\ProductHandler;
+use App\Infrastructure\Persistence\MongoProductRepository;
+use MongoDB\Client;
 use Slim\Factory\AppFactory;
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
 $app = AppFactory::create();
+$app->addBodyParsingMiddleware();
 
-$app->get('/api/products', function (Request $request, Response $response, $args) {
-    $body=json_encode([
-        'products' => [
-            ['id' => 1, 'name' => 'Product 1', 'price' => 10.99],
-            ['id' => 2, 'name' => 'Product 2', 'price' => 19.99],
-            ['id' => 3, 'name' => 'Product 3', 'price' => 5.99],
-        ],
-    ]);
-    $response->getBody()->write($body);
-    return $response->withHeader('Content-Type', 'application/json');
-});
+$client = new Client((string) getenv('MONGODB_URI'));
+$database = getenv('MONGODB_DATABASE') ?: 'app_db';
+$repository = new MongoProductRepository($client->selectCollection($database, 'products'));
+$handler = new ProductHandler(new ProductService($repository));
+
+$app->get('/api/products', [$handler, 'list']);
+$app->get('/api/products/{id}', [$handler, 'show']);
+$app->post('/api/products', [$handler, 'create']);
+$app->put('/api/products/{id}', [$handler, 'update']);
+$app->delete('/api/products/{id}', [$handler, 'delete']);
 
 $app->run();
