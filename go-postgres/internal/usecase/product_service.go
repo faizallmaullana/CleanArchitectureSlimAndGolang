@@ -3,7 +3,7 @@ package usecase
 import (
 	"context"
 
-	"github.com/example/rekrutment-gbu-go/internal/domain"
+	"github.com/faizallmaullana/rekrutment-gbu-go/internal/domain"
 )
 
 type ProductService struct {
