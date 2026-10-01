@@ -50,6 +50,8 @@ services:
       DB_SSLMODE: disable
     ports:
       - "8090:8080"
+    networks:
+      - my_network
 
   seeder:
     build:
@@ -68,6 +70,8 @@ services:
       DB_NAME: app_db
       DB_SSLMODE: disable
     restart: "no"
+    networks:
+      - my_network
 
 volumes:
   postgres_data:
