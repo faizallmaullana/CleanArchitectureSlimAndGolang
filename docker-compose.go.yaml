@@ -16,6 +16,19 @@ services:
       interval: 5s
       timeout: 5s
       retries: 12
+    networks:
+      - my_network
+
+  adminer:
+    image: adminer
+    environment:
+      - ADMINER_DESIGN=pepa-linha
+    command: php -S 0.0.0.0:8080 -t /var/www/html
+    ports:
+      - "0.0.0.0:9000:8080"
+    networks:
+      - my_network
+    restart: always
 
   api:
     build:
@@ -58,3 +71,7 @@ services:
 
 volumes:
   postgres_data:
+
+networks:
+  my_network:
+    driver: bridge
