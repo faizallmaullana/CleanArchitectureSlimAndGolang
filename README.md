@@ -1,5 +1,3 @@
-# Rekrutment GBU
-
 Project ini memiliki dua stack aplikasi:
 
 - Go + Gin + GORM + PostgreSQL
